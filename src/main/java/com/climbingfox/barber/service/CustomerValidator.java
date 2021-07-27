@@ -5,6 +5,7 @@ import java.util.Properties;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ public class CustomerValidator {
     private RabbitAdmin rabbitAdmin;
 	
 	@Autowired
+	@Qualifier("WAITING_QUEUE")
 	private Queue queue;
 	
 	public void validate() throws Exception {
