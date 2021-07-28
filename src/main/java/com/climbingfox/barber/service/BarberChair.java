@@ -4,6 +4,7 @@ import com.climbingfox.barber.StatusQueueConfig;
 import com.climbingfox.barber.WaitingQueueConfig;
 import com.climbingfox.barber.dto.StatusResponse;
 import com.climbingfox.barber.entity.Chair;
+import com.climbingfox.barber.entity.Constants;
 import com.climbingfox.barber.entity.Customer;
 import com.climbingfox.barber.entity.EventType;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.Properties;
-import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 @Slf4j
 @RabbitListener(queues = WaitingQueueConfig.BARBER_WAITING_CUSTOMERS_QUEUE)
@@ -33,7 +34,7 @@ public class BarberChair {
 	private Queue queue;
 
 	@Autowired
-	private Set<Customer> customerRegistry;
+	private ConcurrentSkipListSet<Customer> customerRegistry;
 	
 	private Chair chair;
 	
@@ -49,7 +50,7 @@ public class BarberChair {
 		resp.setCustomerUUID(customer.getToken());
 		postStatusUpdate(resp, EventType.STARTED);
 
-		Thread.sleep(20000);
+		Thread.sleep(Constants.PROCESSING_DURATION_SECONDS * 1000);
 
 		Properties properties = rabbitAdmin.getQueueProperties(queue.getName());
 		Integer count = ((Integer)properties.get("QUEUE_MESSAGE_COUNT"));

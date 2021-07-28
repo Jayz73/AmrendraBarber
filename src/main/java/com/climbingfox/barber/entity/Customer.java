@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.time.LocalTime;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -19,6 +19,8 @@ public class Customer {
     private String email;
 
     private boolean currentlyProcessing;
-    private LocalTime estimatedWaitingTime;
+    private long estimatedWaitingTime;
+    private Date inTime;
+    private int seqNo;
     private Chair chair;
 }

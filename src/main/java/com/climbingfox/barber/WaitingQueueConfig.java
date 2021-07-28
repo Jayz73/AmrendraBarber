@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.Comparator;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 
 @Configuration
@@ -70,7 +70,7 @@ public class WaitingQueueConfig {
 	}
 
 	@Bean
-	public Set<Customer> customerRegistry() {
-		return new CopyOnWriteArraySet<>();
+	public ConcurrentSkipListSet<Customer> customerRegistry() {
+		return new ConcurrentSkipListSet<>(Comparator.comparing(Customer::getInTime));
 	}
 }

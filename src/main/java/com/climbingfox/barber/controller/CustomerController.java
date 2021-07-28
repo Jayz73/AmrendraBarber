@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/shop")
@@ -21,9 +22,8 @@ public class CustomerController {
 	private StatusService statusService;
 
 	@PostMapping("/welcome")
-	public ResponseEntity<String> newCustomer(@RequestBody Customer customer) throws APIException {
-		String ret = service.newCustomer(customer);
-		return new ResponseEntity<>(ret, HttpStatus.CREATED);
+	public Mono<ResponseEntity<Customer>> newCustomer(@RequestBody Customer customer) throws APIException {
+		return Mono.just(ResponseEntity.status(HttpStatus.CREATED).body(service.newCustomer(customer)));
 	}
 
 	@GetMapping("/hello")

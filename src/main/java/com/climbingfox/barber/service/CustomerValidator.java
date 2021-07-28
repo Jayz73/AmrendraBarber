@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.Properties;
-import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 @Service
 @Slf4j
@@ -22,8 +22,8 @@ public class CustomerValidator {
     private RabbitAdmin rabbitAdmin;
 
 	@Autowired
-	private Set<Customer> customerRegistry;
-	
+	private ConcurrentSkipListSet<Customer> customerRegistry;
+
 	@Autowired
 	@Qualifier("WAITING_QUEUE")
 	private Queue queue;
@@ -31,11 +31,10 @@ public class CustomerValidator {
 	public void validate(Customer customer) throws APIException {
 		this.validateNonExistingCustomer(customer);
 		this.validateMaxWaitingLimit();
-		customerRegistry.add(customer);
 	}
 
 	private void validateNonExistingCustomer(Customer customer) throws APIException {
-		if(customerRegistry.contains(customer)) {
+		if(customerRegistry.stream().filter(cust -> cust.getEmail().equals(customer.getEmail())).findAny().isPresent()) {
 			log.warn("Customer already exist, email: {}", customer.getEmail());
 			ErrorResponse errorResponse = new ErrorResponse();
 			errorResponse.setErrorLevel(ErrorLevel.HIGH);
