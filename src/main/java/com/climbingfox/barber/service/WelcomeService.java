@@ -27,7 +27,7 @@ public class WelcomeService {
 	private RabbitAdmin rabbitAdmin;
 	
 	public String newCustomer(Customer customer) throws APIException {
-		customerValidator.validate();
+		customerValidator.validate(customer);
 		customer.setToken(UUID.randomUUID().toString());
 		mqTemplate.convertAndSend(WaitingQueueConfig.BARBER_WAITING_EXCHANGE, WaitingQueueConfig.ROUTINGKEY_WAITING_NEW_CUSTOMER, customer);
 		return "Thanks for waiting";

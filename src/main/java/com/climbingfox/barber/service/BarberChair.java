@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.Properties;
+import java.util.Set;
 
 @Slf4j
 @RabbitListener(queues = WaitingQueueConfig.BARBER_WAITING_CUSTOMERS_QUEUE)
@@ -30,6 +31,9 @@ public class BarberChair {
 	@Autowired
 	@Qualifier("WAITING_QUEUE")
 	private Queue queue;
+
+	@Autowired
+	private Set<Customer> customerRegistry;
 	
 	private Chair chair;
 	
@@ -50,6 +54,7 @@ public class BarberChair {
 		Properties properties = rabbitAdmin.getQueueProperties(queue.getName());
 		Integer count = ((Integer)properties.get("QUEUE_MESSAGE_COUNT"));
 
+		customerRegistry.remove(customer);
 		postStatusUpdate(resp, EventType.COMPLETED);
 		log.info("Completed hair cut in chair {}, customers awaiting: {}", chair, count);
 	}

@@ -1,6 +1,7 @@
 package com.climbingfox.barber;
 
 import com.climbingfox.barber.entity.Chair;
+import com.climbingfox.barber.entity.Customer;
 import com.climbingfox.barber.service.BarberChair;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -11,6 +12,9 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 
 @Configuration
@@ -63,5 +67,10 @@ public class WaitingQueueConfig {
 		RabbitTemplate template = new RabbitTemplate(conn);
 		template.setMessageConverter(this.messageConverter());
 		return template;
+	}
+
+	@Bean
+	public Set<Customer> customerRegistry() {
+		return new CopyOnWriteArraySet<>();
 	}
 }
