@@ -1,5 +1,6 @@
 package com.climbingfox.barber.controller;
 
+import com.climbingfox.barber.dto.APIException;
 import com.climbingfox.barber.entity.Customer;
 import com.climbingfox.barber.service.StatusService;
 import com.climbingfox.barber.service.WelcomeService;
@@ -20,7 +21,7 @@ public class CustomerController {
 	private StatusService statusService;
 
 	@PostMapping("/welcome")
-	public ResponseEntity<String> newCustomer(@RequestBody Customer customer) throws Exception {
+	public ResponseEntity<String> newCustomer(@RequestBody Customer customer) throws APIException {
 		String ret = service.newCustomer(customer);
 		return new ResponseEntity<>(ret, HttpStatus.CREATED);
 	}
@@ -32,7 +33,7 @@ public class CustomerController {
 
 	@GetMapping(value = "/status",
 			produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-	public Flux<?> receiveMessagesForCaller() {
+	public Flux<String> receiveMessagesForCaller() {
 		return statusService.consumeViaCaller();
 	}
 }

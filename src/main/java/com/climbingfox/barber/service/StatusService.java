@@ -1,10 +1,9 @@
 package com.climbingfox.barber.service;
 
-import com.climbingfox.barber.StatusQueueConfig;
 import com.climbingfox.barber.MessageListenerContainerFactory;
+import com.climbingfox.barber.StatusQueueConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.*;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.MessageListenerContainer;
@@ -29,7 +28,7 @@ public class StatusService {
     @Autowired
     private AmqpAdmin amqpAdmin;
 
-    public Flux<?> consumeViaCaller() {
+    public Flux<String> consumeViaCaller() {
         Queue topicQueue = createTopicQueue();
         String qname = topicQueue.getName();
         MessageListenerContainer mlc = messageListenerContainerFactory
@@ -40,12 +39,8 @@ public class StatusService {
                 log.info("Payload: {}", payload);
                 emitter.next(payload);
             });
-            emitter.onRequest(v -> {
-                mlc.start();
-            });
-            emitter.onDispose(() -> {
-                mlc.stop();
-            });
+            emitter.onRequest(v -> mlc.start());
+            emitter.onDispose(mlc::stop);
         });
 
         return Flux.interval(Duration.ofSeconds(5))

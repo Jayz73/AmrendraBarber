@@ -1,6 +1,7 @@
 package com.climbingfox.barber.service;
 
 import com.climbingfox.barber.WaitingQueueConfig;
+import com.climbingfox.barber.dto.APIException;
 import com.climbingfox.barber.entity.Customer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -25,7 +26,7 @@ public class WelcomeService {
 	@Autowired
 	private RabbitAdmin rabbitAdmin;
 	
-	public String newCustomer(Customer customer) throws Exception {
+	public String newCustomer(Customer customer) throws APIException {
 		customerValidator.validate();
 		customer.setToken(UUID.randomUUID().toString());
 		mqTemplate.convertAndSend(WaitingQueueConfig.BARBER_WAITING_EXCHANGE, WaitingQueueConfig.ROUTINGKEY_WAITING_NEW_CUSTOMER, customer);
